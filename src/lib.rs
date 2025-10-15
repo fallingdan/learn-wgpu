@@ -97,7 +97,11 @@ impl State {
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
 
-        // TODO
+        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor{
+            label: Some("Render encoder")
+        });
+
+        // LEFT OFF HERE
     }
 
     fn handle_key(&self, event_loop: &ActiveEventLoop, code: KeyCode, is_pressed: bool) {
