@@ -19,6 +19,7 @@ pub struct State {
     is_surface_configured: bool,
     color: wgpu::Color,
     window: Arc<Window>,
+    render_pipeline: wgpu::RenderPipeline,
 }
 
 impl State {
@@ -76,6 +77,14 @@ impl State {
             view_formats: vec![],
         };
 
+        let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[],
+                immediate_size: 0,
+            });
+
         Ok(Self {
             surface,
             device,
@@ -110,8 +119,6 @@ impl State {
     }
 
     fn handle_mouse_moved(&mut self, pos_x: f64, pos_y: f64) {
-        println!("{pos_x}, {pos_y}");
-
         let x_max = self.config.width;
         let y_max = self.config.height;
 
@@ -229,7 +236,7 @@ impl ApplicationHandler<State> for App {
                         event_loop.exit();
                     }
                 }
-                state.render();
+                state.render().unwrap();
             }
             WindowEvent::KeyboardInput {
                 event:
