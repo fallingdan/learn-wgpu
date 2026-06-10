@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
-use log::{debug, info};
-use wgpu::Limits;
+use wgpu::{Limits, util::DeviceExt};
 use winit::{
     application::ApplicationHandler,
     dpi::PhysicalPosition,
@@ -20,6 +19,7 @@ pub struct State {
     color: wgpu::Color,
     window: Arc<Window>,
     render_pipeline: wgpu::RenderPipeline,
+    vertex_buffer: wgpu::Buffer,
 }
 
 impl State {
@@ -123,6 +123,12 @@ impl State {
             cache: None,
         });
 
+        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Vertex Buffer"),
+            contents: bytemuck::cast_slice(VERTICIES),
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+
         Ok(Self {
             surface,
             device,
@@ -137,6 +143,7 @@ impl State {
                 a: 1.0,
             },
             render_pipeline,
+            vertex_buffer,
         })
     }
 
